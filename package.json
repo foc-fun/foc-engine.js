@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "dependencies": {
+    "starknet": "^7.4.0"
+  },
   "devDependencies": {
     "@types/node": "^24.0.3",
     "typescript": "^5.8.3"
