@@ -1,0 +1,10 @@
+# JS/Node Files
+node_modules
+
+# TypeScript
+*.tsbuildinfo
+*.tscache
+*.d.ts
+dist/
+lib/
+build/
