@@ -1,7 +1,7 @@
 import { Observer, EventType } from "../stores/useEventManager";
 import { NotificationConfig } from "../stores/useInAppNotificationsStore";
 
-export class InAppNotificationsObserver implements Observer {
+export class InAppNotificationsObserver<TEventType extends string = EventType> implements Observer<TEventType> {
   private sendNotification: (notificationTypeId: number, message?: string) => void;
   private notificationConfigs: NotificationConfig[];
   private blockFullAttempts: number = 0;
@@ -23,7 +23,7 @@ export class InAppNotificationsObserver implements Observer {
     this.maxBlockFullAttempts = max;
   }
 
-  async onNotify(eventName: EventType, data?: any): Promise<void> {
+  async onNotify(eventName: TEventType, data?: any): Promise<void> {
     const config = this.notificationConfigs.find(
       (notification) => notification.eventType === eventName
     );

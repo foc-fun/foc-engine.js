@@ -5,7 +5,7 @@ export interface SoundObserverConfig {
   maxBlockFullAttempts?: number;
 }
 
-export class SoundObserver implements Observer {
+export class SoundObserver<TEventType extends string = EventType> implements Observer<TEventType> {
   private playSound: (soundType: string, pitchShift?: number) => Promise<void>;
   private blockFullAttempts: number = 0;
   private config: SoundObserverConfig;
@@ -31,7 +31,7 @@ export class SoundObserver implements Observer {
     return Math.min(Math.max(value, min), max);
   }
 
-  async onNotify(eventType: EventType, data?: any): Promise<void> {
+  async onNotify(eventType: TEventType, data?: any): Promise<void> {
     switch (eventType) {
       case "TxAdded": {
         const blockProgress = data?.progress || 0;
@@ -45,14 +45,14 @@ export class SoundObserver implements Observer {
           1
         );
         
-        await this.playSound(eventType, pitchShift);
+        await this.playSound(eventType as string, pitchShift);
         this.blockFullAttempts = 0;
         break;
       }
       
       case "MineClicked": {
         if (!data?.counter || !data?.difficulty) {
-          await this.playSound(eventType);
+          await this.playSound(eventType as string);
           break;
         }
         
@@ -63,14 +63,14 @@ export class SoundObserver implements Observer {
           1
         );
         
-        await this.playSound(eventType, pitchShift);
+        await this.playSound(eventType as string, pitchShift);
         break;
       }
       
       case "BlockFull": {
         this.blockFullAttempts++;
         if (this.blockFullAttempts >= (this.config.maxBlockFullAttempts || 3)) {
-          await this.playSound(eventType);
+          await this.playSound(eventType as string);
           this.blockFullAttempts = 0;
         }
         break;
@@ -80,12 +80,12 @@ export class SoundObserver implements Observer {
       case "UpgradePurchased":
       case "AutomationPurchased": {
         this.blockFullAttempts = 0;
-        await this.playSound(eventType);
+        await this.playSound(eventType as string);
         break;
       }
       
       default: {
-        await this.playSound(eventType);
+        await this.playSound(eventType as string);
         break;
       }
     }

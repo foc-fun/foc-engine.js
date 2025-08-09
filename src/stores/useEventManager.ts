@@ -1,7 +1,20 @@
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 
-export type EventType =
+// Generic event manager that works with any event type
+export interface Observer<TEventType = string> {
+  onNotify(eventName: TEventType, data?: any): Promise<void>;
+}
+
+export type EventManager<TEventType = string> = {
+  observers: Map<string, Observer<TEventType>>;
+  registerObserver(observer: Observer<TEventType>): string;
+  unregisterObserver(observerId: string): void;
+  notify(eventType: TEventType, data?: any): void;
+};
+
+// Default event types from POW app (for backwards compatibility)
+export type DefaultEventTypes =
   | "BasicClick"
   | "BasicError"
   | "DiceRoll"
@@ -30,42 +43,44 @@ export type EventType =
   | "TutorialDismissed"
   | "SwitchStore"
   | "SwitchPage"
-  | "SwitchTxTab"
-  | string;
+  | "SwitchTxTab";
 
-export interface Observer {
-  onNotify(eventName: EventType, data?: any): Promise<void>;
+// For backwards compatibility
+export type EventType = DefaultEventTypes | string;
+
+// Factory function to create a typed event manager
+export function createEventManager<TEventType = string>() {
+  return create<EventManager<TEventType>>((set, get) => ({
+    observers: new Map<string, Observer<TEventType>>(),
+    
+    registerObserver(observer: Observer<TEventType>): string {
+      const observerId = uuidv4();
+      set((state) => ({
+        observers: new Map(state.observers).set(observerId, observer),
+      }));
+      return observerId;
+    },
+    
+    unregisterObserver(observerId: string): void {
+      set((state) => {
+        const newObservers = new Map(state.observers);
+        newObservers.delete(observerId);
+        return { observers: newObservers };
+      });
+    },
+    
+    notify(eventType: TEventType, data?: any): void {
+      get().observers.forEach((observer, _) => {
+        observer.onNotify(eventType, data);
+      });
+    },
+  }));
 }
 
-export type EventManager = {
-  observers: Map<string, Observer>;
-  registerObserver(observer: Observer): string;
-  unregisterObserver(observerId: string): void;
-  notify(eventType: EventType, data?: any): void;
-};
+// Default event manager with POW event types (for backwards compatibility)
+export const useEventManager = createEventManager<EventType>();
 
-export const useEventManager = create<EventManager>((set, get) => ({
-  observers: new Map<string, Observer>(),
-  
-  registerObserver(observer: Observer): string {
-    const observerId = uuidv4();
-    set((state) => ({
-      observers: new Map(state.observers).set(observerId, observer),
-    }));
-    return observerId;
-  },
-  
-  unregisterObserver(observerId: string): void {
-    set((state) => {
-      const newObservers = new Map(state.observers);
-      newObservers.delete(observerId);
-      return { observers: newObservers };
-    });
-  },
-  
-  notify(eventType: EventType, data?: any): void {
-    get().observers.forEach((observer, _) => {
-      observer.onNotify(eventType, data);
-    });
-  },
-}));
+// Helper function to create custom event managers with user-defined types
+export function createCustomEventManager<TEventType extends string>() {
+  return createEventManager<TEventType>();
+}
