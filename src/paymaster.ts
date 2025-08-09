@@ -1,4 +1,5 @@
 import { Call, TypedData } from 'starknet';
+import { FocEngine } from './engine';
 
 // TODO: If api key provided, use avnu api, otherwise use engineUrl directly
 
@@ -52,4 +53,50 @@ export const sendGaslessTx = async (engineUrl: string, gaslessTx: SendGaslessTxI
     throw new Error('Failed to send gasless transaction');
   });
   return gaslessTxRes.data;
+}
+
+export class Paymaster {
+  private engine: FocEngine;
+
+  constructor(engine: FocEngine) {
+    this.engine = engine;
+  }
+
+  async buildGaslessTx(calls: Call[], options?: {
+    deploymentData?: DeploymentData;
+    account?: string;
+    network?: string;
+    chainId?: string;
+    nonce?: string;
+    version?: string;
+    maxFee?: string;
+    resourceBounds?: any;
+  }): Promise<TypedData> {
+    const gaslessTxInput: BuildGaslessTxInput = {
+      network: options?.network || "sepolia",
+      account: options?.account || "",
+      calls,
+      deploymentData: options?.deploymentData,
+    };
+
+    return buildGaslessTx(this.engine.url, gaslessTxInput);
+  }
+
+  async sendGaslessTx(signedTxData: {
+    txData: TypedData;
+    signature: string[];
+    account?: string;
+    network?: string;
+    deploymentData?: DeploymentData;
+  }): Promise<string> {
+    const gaslessTxInput: SendGaslessTxInput = {
+      account: signedTxData.account || "",
+      txData: signedTxData.txData,
+      signature: signedTxData.signature,
+      network: signedTxData.network || "sepolia",
+      deploymentData: signedTxData.deploymentData,
+    };
+
+    return sendGaslessTx(this.engine.url, gaslessTxInput);
+  }
 }

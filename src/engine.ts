@@ -1,9 +1,9 @@
 import { getFocEngineUrl } from './utils';
 
-export class Engine {
+export class FocEngine {
   public url: string;
 
-  constructor(network: string) {
-    this.url = getFocEngineUrl(network);
+  constructor(network: string, customUrl?: string) {
+    this.url = customUrl || getFocEngineUrl(network);
   }
 }
