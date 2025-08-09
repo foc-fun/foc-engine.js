@@ -17,33 +17,7 @@ export type EventManager<TEventType = string> = {
 export type DefaultEventTypes =
   | "BasicClick"
   | "BasicError"
-  | "DiceRoll"
-  | "MineClicked"
-  | "MineDone"
-  | "SequenceClicked"
-  | "SequenceDone"
-  | "ProveClicked"
-  | "ProveDone"
-  | "DaClicked"
-  | "DaDone"
-  | "BalanceUpdated"
-  | "ItemPurchased"
-  | "BuyFailed"
-  | "InvalidPurchase"
-  | "BlockFull"
-  | "TxUpgradePurchased"
-  | "UpgradePurchased"
-  | "AutomationPurchased"
-  | "DappsPurchased"
-  | "StakingPurchased"
-  | "L2Purchased"
-  | "PrestigePurchased"
-  | "TxAdded"
-  | "AchievementCompleted"
-  | "TutorialDismissed"
-  | "SwitchStore"
-  | "SwitchPage"
-  | "SwitchTxTab";
+  | "SwitchPage";
 
 // For backwards compatibility
 export type EventType = DefaultEventTypes | string;
