@@ -1,9 +1,14 @@
 import React, { createContext, useContext, useCallback, useMemo, ReactNode } from "react";
 import { Call } from "starknet";
-import { FocEngine, Paymaster } from "@foc-engine/core";
+import { FocEngine, Paymaster, normalizeNetworkName } from "@foc-engine/core";
+
+export type NetworkName = 
+  | "mainnet" | "sepolia" | "devnet"
+  | "sn_mainnet" | "sn_sepolia" | "sn_devnet"
+  | "SN_MAINNET" | "SN_SEPOLIA" | "SN_DEVNET";
 
 export interface FocEngineConfig {
-  network?: "mainnet" | "sepolia" | "devnet";
+  network?: NetworkName;
   customUrl?: string;
 }
 
@@ -26,7 +31,7 @@ interface FocEngineContextType {
   disconnect: () => void;
   buildGaslessTx: (params: GaslessTxParams) => Promise<any>;
   sendGaslessTx: (signedTx: any) => Promise<any>;
-  setNetwork: (network: "mainnet" | "sepolia" | "devnet") => void;
+  setNetwork: (network: NetworkName) => void;
 }
 
 const FocEngineContext = createContext<FocEngineContextType>({
@@ -43,7 +48,7 @@ const FocEngineContext = createContext<FocEngineContextType>({
 
 interface FocEngineProviderProps {
   children: ReactNode;
-  defaultNetwork?: "mainnet" | "sepolia" | "devnet";
+  defaultNetwork?: NetworkName;
   customUrl?: string;
 }
 
@@ -54,7 +59,13 @@ export const FocEngineProvider: React.FC<FocEngineProviderProps> = ({
 }) => {
   const [engine, setEngine] = React.useState<FocEngine | null>(null);
   const [paymaster, setPaymaster] = React.useState<Paymaster | null>(null);
-  const [network, setNetworkState] = React.useState<string>(defaultNetwork);
+  const [network, setNetworkState] = React.useState<string>(() => {
+    try {
+      return normalizeNetworkName(defaultNetwork);
+    } catch {
+      return "SN_SEPOLIA"; // fallback
+    }
+  });
   const [isConnected, setIsConnected] = React.useState(false);
 
   const connect = useCallback((config?: FocEngineConfig) => {
@@ -62,12 +73,15 @@ export const FocEngineProvider: React.FC<FocEngineProviderProps> = ({
       const networkToUse = config?.network || defaultNetwork;
       const urlToUse = config?.customUrl || customUrl;
       
-      const newEngine = new FocEngine(networkToUse as any, urlToUse);
+      // Normalize the network name for internal use
+      const normalizedNetwork = normalizeNetworkName(networkToUse);
+      
+      const newEngine = new FocEngine(normalizedNetwork, urlToUse);
       const newPaymaster = new Paymaster(newEngine);
       
       setEngine(newEngine);
       setPaymaster(newPaymaster);
-      setNetworkState(networkToUse);
+      setNetworkState(normalizedNetwork);
       setIsConnected(true);
     } catch (error) {
       console.error("Failed to connect to FOC Engine:", error);
@@ -103,11 +117,12 @@ export const FocEngineProvider: React.FC<FocEngineProviderProps> = ({
     return await paymaster.sendGaslessTx(signedTx);
   }, [paymaster]);
 
-  const setNetwork = useCallback((newNetwork: "mainnet" | "sepolia" | "devnet") => {
+  const setNetwork = useCallback((newNetwork: NetworkName) => {
+    const normalizedNetwork = normalizeNetworkName(newNetwork);
     if (isConnected) {
       connect({ network: newNetwork, customUrl });
     } else {
-      setNetworkState(newNetwork);
+      setNetworkState(normalizedNetwork);
     }
   }, [isConnected, connect, customUrl]);
 
