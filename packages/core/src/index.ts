@@ -9,10 +9,7 @@ export * from "./stores/useOnchainActions";
 export * from "./observers/InAppNotificationsObserver";
 export * from "./observers/SoundObserver";
 
-export * from "./hooks/useImagePreloader";
-export * from "./hooks/useImages";
-
-export * from "./context/FocEngineConnector";
-export * from "./context/StarknetConnector";
-
 export * from "./types/events";
+
+export * from "./constants";
+export * from "./utils";

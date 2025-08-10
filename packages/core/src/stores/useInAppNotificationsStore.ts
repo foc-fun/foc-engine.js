@@ -24,7 +24,7 @@ interface InAppNotificationsState {
 }
 
 export const useInAppNotificationsStore = create<InAppNotificationsState>(
-  (set, get) => ({
+  (set) => ({
     inAppNotifications: [],
     notificationConfigs: [],
     notificationLimit: 5,

@@ -1,7 +1,7 @@
 // Examples of how to use the enhanced StarknetConnector
 
 import React from "react";
-import { StarknetProvider, useStarknet, TokenInfo } from '../context/StarknetConnector';
+import { StarknetProvider, useStarknet, TokenInfo } from '@foc-engine/react';
 
 // Example 1: Basic usage with default ETH balance
 export function BasicStarknetApp() {

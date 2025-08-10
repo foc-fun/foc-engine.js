@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useCallback, useMemo, ReactNode } from "react";
 import { Call } from "starknet";
-import { FocEngine } from "../engine";
-import { Paymaster } from "../paymaster";
+import { FocEngine, Paymaster } from "@foc-engine/core";
 
 export interface FocEngineConfig {
   network?: "mainnet" | "sepolia" | "devnet";

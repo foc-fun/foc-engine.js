@@ -1,7 +1,7 @@
 // Examples of how to use the configurable EventManager
 
-import { createCustomEventManager, Observer } from '../stores/useEventManager';
-import { CommonWebEvents, EventConfig, EventNamesFromConfig } from '../types/events';
+import { createCustomEventManager, Observer } from '@foc-engine/core';
+import { CommonWebEvents, EventConfig, EventNamesFromConfig } from '@foc-engine/core';
 
 // Example 1: Using predefined common event types
 export const useWebAppEventManager = createCustomEventManager<CommonWebEvents>();

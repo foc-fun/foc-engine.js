@@ -1,8 +1,7 @@
 // Examples demonstrating the image hooks and preloading system
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useImagePreloader, ImageAsset } from '../hooks/useImagePreloader';
-import { useImages } from '../hooks/useImages';
+import { useImagePreloader, ImageAsset, useImages } from '@foc-engine/react';
 
 // Example 1: Basic image preloading with progress
 export function BasicImagePreloader() {

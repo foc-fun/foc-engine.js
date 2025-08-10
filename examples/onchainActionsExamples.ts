@@ -7,7 +7,7 @@ import {
   useOnchainActionsManager,
   createOnchainActionsStore,
   OnchainActionsConfig 
-} from '../stores/useOnchainActions';
+} from '@foc-engine/core';
 
 // Example 1: Using environment variables for configuration
 /*

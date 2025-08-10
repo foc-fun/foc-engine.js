@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useCallback, useMemo, ReactNode } from "react";
-import { Account, Call, RpcProvider, Contract, cairo, num } from "starknet";
+import { Account, Call, RpcProvider, Contract, num } from "starknet";
 
 // Default token addresses for different networks
 const DEFAULT_TOKENS = {
@@ -331,7 +331,7 @@ export const StarknetProvider: React.FC<StarknetProviderProps> = ({
   }, [provider]);
 
   const setProvider = useCallback((config: StarknetConfig) => {
-    const newProvider = initProvider(config);
+    initProvider(config);
     
     // Update balance token and supported tokens if chain changed
     if (config.chainId && config.chainId !== chainId) {

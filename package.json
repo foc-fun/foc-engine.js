@@ -1,37 +1,21 @@
 {
-  "name": "foc-engine",
-  "version": "0.1.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "name": "foc-engine-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:core && npm run build:react",
+    "build:core": "npm run build --workspace=@foc-engine/core",
+    "build:react": "npm run build --workspace=@foc-engine/react",
+    "clean": "npm run clean --workspaces",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "starknet": "^7.4.0",
-    "uuid": "^9.0.1",
-    "zustand": "^4.4.1"
-  },
   "devDependencies": {
-    "@types/node": "^24.0.3",
-    "@types/react": "^19.1.9",
-    "@types/react-dom": "^19.1.7",
-    "@types/uuid": "^9.0.8",
-    "typescript": "^5.8.3"
+    "typescript": "^5.7.3"
   },
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": false
-    },
-    "react-dom": {
-      "optional": true
-    }
-  }
+  "author": "",
+  "license": "MIT",
+  "description": "FOC Engine monorepo for Starknet dApps"
 }
