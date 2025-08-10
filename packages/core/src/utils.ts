@@ -15,8 +15,4 @@ export const getFocEngineUrl = (network: string): string => {
     default:
       throw new Error(`Unsupported network: ${network} (supported: SN_MAINNET, SN_SEPOLIA, SN_DEVNET)`);
   }
-}
-
-module.exports = {
-  getFocEngineUrl,
 };
